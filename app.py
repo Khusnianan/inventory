@@ -101,6 +101,11 @@ if selected == "Dashboard":
                         a.print();
                     }}
                 </script>
+                <style>
+                    #print-area {{
+                    display: none;
+                    }}
+                </style>
             </head>
             <body>
                 <div id="print-area">
