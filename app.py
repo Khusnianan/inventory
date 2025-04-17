@@ -6,11 +6,11 @@ from datetime import datetime
 # --- KONFIGURASI DATABASE ---
 def get_connection():
     return psycopg2.connect(
-        host="YOUR_RAILWAY_HOST",
-        database="YOUR_DB_NAME",
-        user="YOUR_USERNAME",
-        password="YOUR_PASSWORD",
-        port=5432
+        host="shuttle.proxy.rlwy.net",
+        database="railway",
+        user="postgres",
+        password="RNCRzYyNwkvCmYnyJtJUOfrxwqWXpzjh",
+        port=25419
     )
 
 # --- FUNGSI DATABASE ---
