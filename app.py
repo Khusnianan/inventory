@@ -6,11 +6,11 @@ from datetime import datetime
 # --- KONFIGURASI DATABASE ---
 def get_connection():
     return psycopg2.connect(
-        host="shuttle.proxy.rlwy.net",
-        database="railway",
-        user="postgres",
-        password="RNCRzYyNwkvCmYnyJtJUOfrxwqWXpzjh",
-        port=25419
+        host="YOUR_RAILWAY_HOST",
+        database="YOUR_DB_NAME",
+        user="YOUR_USERNAME",
+        password="YOUR_PASSWORD",
+        port=5432
     )
 
 # --- FUNGSI DATABASE ---
@@ -31,7 +31,6 @@ def tambah_transaksi(tipe, barang_id, jumlah):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("INSERT INTO transaksi (tipe, barang_id, jumlah, tanggal) VALUES (%s, %s, %s, %s)", (tipe, barang_id, jumlah, datetime.now()))
-    # update stok barang
     if tipe == 'in':
         cur.execute("UPDATE barang SET stok = stok + %s WHERE id = %s", (jumlah, barang_id))
     else:
@@ -71,6 +70,25 @@ if selected == "Dashboard":
     df = get_barang()
     st.subheader("📊 Data Stok Barang")
     st.dataframe(df, use_container_width=True)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        csv = df.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            label="📥 Export ke Excel (CSV)",
+            data=csv,
+            file_name='data_stok_barang.csv',
+            mime='text/csv')
+
+    with col2:
+        st.markdown("""
+            <script>
+            function printData() {
+                window.print();
+            }
+            </script>
+            <button onclick="printData()">🖨️ Print Halaman</button>
+        """, unsafe_allow_html=True)
 
 elif selected == "Tambah Barang":
     st.subheader("➕ Tambah Barang Baru")
