@@ -10,7 +10,8 @@ def get_connection():
         database="railway",
         user="postgres",
         password="RNCRzYyNwkvCmYnyJtJUOfrxwqWXpzjh",
-        port=25419
+        port=25419,
+        sslmode="require"        
     )
 
 # --- FUNGSI DATABASE ---
