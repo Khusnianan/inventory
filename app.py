@@ -71,16 +71,18 @@ st.markdown(menu_style, unsafe_allow_html=True)
 if selected == "Dashboard":
     st.subheader("📊 Data Stok Barang")
 
+    df = get_barang()
+    st.dataframe(df)
+
     col1, col2 = st.columns(2)
     with col1:
-        df = get_barang()
         output = io.BytesIO()
         with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
             df.to_excel(writer, index=False, sheet_name='Data Stok')
         xlsx_data = output.getvalue()
 
         st.download_button(
-            label="📥 Download Excel (.xlsx)",
+            label="📅 Download Excel (.xlsx)",
             data=xlsx_data,
             file_name='data_stok_barang.xlsx',
             mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -99,7 +101,7 @@ elif selected == "Tambah Barang":
         st.success("Barang berhasil ditambahkan.")
 
 elif selected == "Transaksi Masuk":
-    st.subheader("📥 Transaksi Masuk")
+    st.subheader("📅 Transaksi Masuk")
     df = get_barang()
     barang_dict = dict(zip(df['nama'], df['id']))
     barang = st.selectbox("Pilih Barang", options=list(barang_dict.keys()))
@@ -109,7 +111,7 @@ elif selected == "Transaksi Masuk":
         st.success("Transaksi masuk berhasil ditambahkan.")
 
 elif selected == "Transaksi Keluar":
-    st.subheader("📤 Transaksi Keluar")
+    st.subheader("📄 Transaksi Keluar")
     df = get_barang()
     barang_dict = dict(zip(df['nama'], df['id']))
     barang = st.selectbox("Pilih Barang", options=list(barang_dict.keys()))
