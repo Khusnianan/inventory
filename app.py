@@ -2,6 +2,8 @@ import streamlit as st
 import psycopg2
 import pandas as pd
 from datetime import datetime
+import streamlit.components.v1 as components
+from io import BytesIO
 
 # --- KONFIGURASI DATABASE ---
 def get_connection():
@@ -10,8 +12,7 @@ def get_connection():
         database="railway",
         user="postgres",
         password="RNCRzYyNwkvCmYnyJtJUOfrxwqWXpzjh",
-        port=25419,
-        sslmode="require"        
+        port=25419
     )
 
 # --- FUNGSI DATABASE ---
@@ -74,22 +75,43 @@ if selected == "Dashboard":
 
     col1, col2 = st.columns(2)
     with col1:
-        csv = df.to_csv(index=False).encode('utf-8')
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+            df.to_excel(writer, index=False, sheet_name='StokBarang')
+        excel_data = output.getvalue()
         st.download_button(
-            label="📥 Export ke Excel (CSV)",
-            data=csv,
-            file_name='data_stok_barang.csv',
-            mime='text/csv')
+            label="📥 Export ke Excel (XLSX)",
+            data=excel_data,
+            file_name='data_stok_barang.xlsx',
+            mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
     with col2:
-        st.markdown("""
-            <script>
-            function printData() {
-                window.print();
-            }
-            </script>
-            <button onclick="printData()">🖨️ Print Halaman</button>
-        """, unsafe_allow_html=True)
+        st.markdown("### 🖨️ Cetak Data Tabel")
+        html_string = f"""
+            <html>
+            <head>
+                <script>
+                    function printDiv() {{
+                        var divContents = document.getElementById("print-area").innerHTML;
+                        var a = window.open('', '', 'height=600, width=800');
+                        a.document.write('<html><head><title>Print</title></head><body>');
+                        a.document.write(divContents);
+                        a.document.write('</body></html>');
+                        a.document.close();
+                        a.print();
+                    }}
+                </script>
+            </head>
+            <body>
+                <div id="print-area">
+                    {df.to_html(index=False)}
+                </div>
+                <br/>
+                <button onclick="printDiv()" style="padding:10px 20px; font-size:16px; background-color:#4CAF50; color:white; border:none; border-radius:5px;">🖨️ Cetak Tabel</button>
+            </body>
+            </html>
+        """
+        components.html(html_string, height=600, scrolling=True)
 
 elif selected == "Tambah Barang":
     st.subheader("➕ Tambah Barang Baru")
